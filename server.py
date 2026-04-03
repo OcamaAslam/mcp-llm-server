@@ -60,4 +60,31 @@ def search_notes(query):
     return "\n".join(res)
 
 
+# define resources to be read by LLM
+
+
+@mcp.resource("notes//list")
+def list_all_notes():
+    """
+    Returns a list of all saved note titles.
+    The LLM reads this to know what notes exist.
+    """
     
+    if not notes:
+        return "No notes saved yet."
+    
+    titles = "\n".join(f"- {title}" for title in notes.keys())
+    return f"Saved notes:\n{titles}"
+
+
+@mcp.resource("notes://note/{title}")
+def get_note(title):
+    """
+    Returns the full content of a specific note.
+    URI example: notes://note/My Meeting Notes
+    """
+    
+    if title not in notes:
+        return f"Note {title} does not exist."
+    
+    return f"Title: {title}\n\nContent:\n{notes[title]}"
